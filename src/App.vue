@@ -1,7 +1,22 @@
 <template>
   <div>
-    <h1>vue Todo with Typescript</h1>
-    <todo-input :item="todoText" @input="updateTodoText"></todo-input>
+    <header>
+      <h1>vue Todo with Typescript</h1>
+    </header>
+    <main>
+      <todo-input
+        :item="todoText"
+        @input="updateTodoText"
+        @add="addTodoItem"
+      ></todo-input>
+      <div>
+        <ul>
+          <li>아이템 1</li>
+          <li>아이템 2</li>
+          <li>아이템 3</li>
+        </ul>
+      </div>
+    </main>
   </div>
 </template>
 
@@ -17,8 +32,16 @@ export default Vue.extend({
     };
   },
   methods: {
-    updateTodoText(value: any) {
+    updateTodoText(value: string) {
       this.todoText = value;
+    },
+    addTodoItem() {
+      const value = this.todoText;
+      localStorage.setItem(value, value);
+      this.initTodoText();
+    },
+    initTodoText() {
+      this.todoText = "";
     },
   },
 });
