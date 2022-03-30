@@ -14,7 +14,9 @@
           <TodoListItem
             v-for="(todoItem, index) in todoItems"
             :key="index"
+            :index="index"
             :todoItem="todoItem"
+            @remove="removeTodoItem"
           ></TodoListItem>
           <!-- <li>아이템 1</li>
           <li>아이템 2</li>
@@ -77,6 +79,11 @@ export default Vue.extend({
     fetchTodoItems() {
       this.todoItems = storage.fetch();
       //todoItems가 never[]로되어있는데 그 이유는 data에 []만 초기화시키고 타입을 지정안해서!
+    },
+    removeTodoItem(index: number) {
+      console.log("remove", index);
+      this.todoItems.splice(index, 1);
+      storage.save(this.todoItems);
     },
   },
   created() {
