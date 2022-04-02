@@ -17,6 +17,7 @@
             :index="index"
             :todoItem="todoItem"
             @remove="removeTodoItem"
+            @toggle="toggleTodoItemComplete"
           ></TodoListItem>
           <!-- <li>아이템 1</li>
           <li>아이템 2</li>
@@ -54,12 +55,19 @@ const storage = {
     return result;
   },
 };
+//export를 붙이면 외부파일에서 사용가능
+export interface Todo {
+  //객체를 위한 타입
+  title: string;
+  done: boolean;
+}
 export default Vue.extend({
   components: { TodoInput, TodoListItem },
   data() {
     return {
       todoText: "",
-      todoItems: [] as any[],
+      todoItems: [] as Todo[], // any[]에서 Todo[]로 진화
+      //vue에서는 데이터를 초기화할때, as를 씀.
     };
   },
   methods: {
@@ -69,7 +77,14 @@ export default Vue.extend({
     addTodoItem() {
       const value = this.todoText;
       //localStorage.setItem(value, value);
-      this.todoItems.push(value);
+      const todo: Todo = {
+        title: value,
+        done: false,
+      };
+      this.todoItems.push(todo);
+      /**
+       * Argument of type 'string' is not assignable to parameter of type 'Todo'
+       */
       storage.save(this.todoItems);
       this.initTodoText();
     },
@@ -83,6 +98,17 @@ export default Vue.extend({
     removeTodoItem(index: number) {
       console.log("remove", index);
       this.todoItems.splice(index, 1);
+      storage.save(this.todoItems);
+    },
+    toggleTodoItemComplete(todoItem: Todo, index: number) {
+      // this.todoItems.splice(index, 1, {
+      //   title: todoItem.title,
+      //   done: !todoItem.done,
+      // });
+      this.todoItems.splice(index, 1, {
+        ...todoItem,
+        done: !todoItem.done,
+      });
       storage.save(this.todoItems);
     },
   },
